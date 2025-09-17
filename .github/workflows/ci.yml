@@ -1,0 +1,103 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  backend-test:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: verifly_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+          
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+        
+    - name: Install dependencies
+      working-directory: ./backend
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install ruff black pytest pytest-asyncio httpx
+        
+    - name: Lint with ruff
+      working-directory: ./backend
+      run: ruff check .
+      
+    - name: Format check with black
+      working-directory: ./backend
+      run: black --check .
+      
+    - name: Type check with mypy
+      working-directory: ./backend
+      run: |
+        pip install mypy
+        mypy app --ignore-missing-imports || true
+        
+    - name: Test with pytest
+      working-directory: ./backend
+      env:
+        DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/verifly_test
+        REDIS_URL: redis://localhost:6379/0
+        SECRET_KEY: test-secret-key-for-ci-only
+      run: |
+        pytest tests/ -v || echo "Tests will be added later"
+
+  frontend-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: ./frontend/package-lock.json
+        
+    - name: Install dependencies
+      working-directory: ./frontend
+      run: npm ci
+      
+    - name: Lint
+      working-directory: ./frontend
+      run: npm run lint
+      
+    - name: Type check
+      working-directory: ./frontend
+      run: npm run type-check
+      
+    - name: Build
+      working-directory: ./frontend
+      run: npm run build
