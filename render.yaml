@@ -40,4 +40,4 @@ databases:
     plan: starter
     databaseName: verifly2
     user: verifly
-    ipAllowList: []  # empty = allow Render internal access
+    ipAllowList: []
