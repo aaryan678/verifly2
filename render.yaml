@@ -29,17 +29,14 @@ services:
       # CORS origins - update with your frontend URL
       - key: BACKEND_CORS_ORIGINS
         value: "https://verifly2-frontend.vercel.app,http://localhost:3000"
-    ipAllowList: []
 
   - type: redis
     name: verifly2-redis
     plan: starter
     maxmemoryPolicy: allkeys-lru
-    ipAllowList: []
 
 databases:
   - name: verifly2-postgres
-    plan: starter
+    plan: free
     databaseName: verifly2
     user: verifly
-    ipAllowList: []
