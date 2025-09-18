@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings
-from typing import Optional, List
+from typing import Optional, List, Union
 import os
 
 
@@ -18,15 +18,15 @@ class Settings(BaseSettings):
     # Environment
     environment: str = "development"
     
-    # CORS - handle both string and list formats
-    backend_cors_origins: List[str] = ["http://localhost:3000"]
+    # CORS - accept string from env var, convert to list
+    backend_cors_origins: str = "http://localhost:3000"
     
     @property
     def cors_origins(self) -> List[str]:
-        """Handle CORS origins from environment variable (comma-separated string) or list"""
-        if isinstance(self.backend_cors_origins, str):
-            return [origin.strip() for origin in self.backend_cors_origins.split(",")]
-        return self.backend_cors_origins
+        """Handle CORS origins from environment variable (comma-separated string)"""
+        if not self.backend_cors_origins:
+            return ["http://localhost:3000"]
+        return [origin.strip() for origin in self.backend_cors_origins.split(",")]
     
     # Email (for future use)
     smtp_host: str = "localhost"
