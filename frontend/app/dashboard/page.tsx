@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuth } from '@/lib/hooks/useAuth'
+import useAuth from '@/lib/hooks/useAuth'
 import { Button } from '@/components/ui/Button'
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
