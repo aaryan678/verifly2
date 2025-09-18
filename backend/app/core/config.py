@@ -7,6 +7,13 @@ class Settings(BaseSettings):
     # Database
     database_url: str = "sqlite+aiosqlite:///./verifly.db"
     
+    @property
+    def async_database_url(self) -> str:
+        """Convert database URL to async format for asyncpg"""
+        if self.database_url.startswith("postgresql://"):
+            return self.database_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+        return self.database_url
+    
     # Redis
     redis_url: str = "redis://localhost:6379/0"
     
