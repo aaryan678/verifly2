@@ -34,6 +34,7 @@ services:
     name: verifly2-redis
     plan: free
     maxmemoryPolicy: allkeys-lru
+    ipAllowList: []
 
 databases:
   - name: verifly2-postgres
