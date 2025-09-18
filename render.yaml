@@ -30,13 +30,13 @@ services:
       - key: BACKEND_CORS_ORIGINS
         value: "https://verifly2-frontend.vercel.app,http://localhost:3000"
 
-  - type: redis
-    name: verifly2-redis
-    plan: starter
-    maxmemoryPolicy: allkeys-lru
-
 databases:
   - name: verifly2-postgres
     plan: free
     databaseName: verifly2
     user: verifly
+
+redis:
+  - name: verifly2-redis
+    plan: free
+    maxmemoryPolicy: allkeys-lru
