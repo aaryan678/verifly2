@@ -1,10 +1,11 @@
 from pydantic_settings import BaseSettings
-from typing import Optional
+from typing import Optional, List
+import os
 
 
 class Settings(BaseSettings):
     # Database
-    database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/verifly"
+    database_url: str = "sqlite+aiosqlite:///./verifly.db"
     
     # Redis
     redis_url: str = "redis://localhost:6379/0"
@@ -17,8 +18,15 @@ class Settings(BaseSettings):
     # Environment
     environment: str = "development"
     
-    # CORS
-    backend_cors_origins: list[str] = ["http://localhost:3000"]
+    # CORS - handle both string and list formats
+    backend_cors_origins: List[str] = ["http://localhost:3000"]
+    
+    @property
+    def cors_origins(self) -> List[str]:
+        """Handle CORS origins from environment variable (comma-separated string) or list"""
+        if isinstance(self.backend_cors_origins, str):
+            return [origin.strip() for origin in self.backend_cors_origins.split(",")]
+        return self.backend_cors_origins
     
     # Email (for future use)
     smtp_host: str = "localhost"
