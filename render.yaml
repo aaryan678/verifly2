@@ -30,7 +30,7 @@ services:
           property: connectionString
       # CORS origins - update with your frontend URL
       - key: BACKEND_CORS_ORIGINS
-        value: "https://verifly2-frontend.vercel.app,http://localhost:3000"
+        value: "https://verifly21-kfc9eli0c-aaryanlalwani12345-6606s-projects.vercel.app"
 
   - type: redis
     name: verifly2-redis
